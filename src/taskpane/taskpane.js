@@ -7,6 +7,7 @@ Office.onReady(async () => {
   document.getElementById('btn-accounts').onclick = () => loadData('/accounts', 'Accounts');
   document.getElementById('btn-trialbalance').onclick = () => loadData('/reports/trialbalance', 'Trial Balance');
   document.getElementById('btn-rollingtrialbalance').onclick = () => loadRollingTrialBalance();
+  document.getElementById('btn-connect').onclick = connectNewOrganisation;
 });
 
 async function loadOrganisations() {
@@ -122,4 +123,17 @@ function flattenData(data) {
     rows.push(headers.map(h => item[h] !== null && item[h] !== undefined ? String(item[h]) : ''));
   });
   return rows;
+}
+
+async function connectNewOrganisation() {
+  const status = document.getElementById('status');
+  status.textContent = 'Opening Xero login...';
+  try {
+    const response = await fetch(API_BASE + '/connect');
+    const data = await response.json();
+    window.open(data.url, '_blank');
+    status.textContent = 'Complete the login in your browser, then click Switch Organisation to refresh.';
+  } catch (err) {
+    status.textContent = `Error: ${err.message}`;
+  }
 }
